@@ -1,7 +1,7 @@
 package org.koreait.file.controllers;
 
-import io.swagger.v3.oas.annotations.Operation; // API 메서드 설명을 위한 Operation 어노테이션 임포트
-import io.swagger.v3.oas.annotations.Parameter; // 개별 파라미터 설명을 위한 Parameter 어노테이션 임포트
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
