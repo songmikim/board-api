@@ -8,7 +8,7 @@ import org.koreait.global.entities.BaseEntity;
 @Entity
 public class CrawlerConfig extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키 자동 생성 (Auto Increment 방식)
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)
