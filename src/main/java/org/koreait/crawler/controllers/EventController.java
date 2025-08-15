@@ -1,5 +1,9 @@
 package org.koreait.crawler.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.entities.CrawledData;
@@ -14,16 +18,21 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/events")
-@Tag(name="환경 행사 API")
+@Tag(name="환경 행사 API", description = "크롤링된 환경 행사 정보를 조회하는 기능을 제공")
 public class EventController {
 
     private final CrawledDataInfoService infoService;
 
+    @Operation(summary = "환경 행사 목록 조회", description = "저장된 모든 환경 행사 정보를 조회")
+    @ApiResponse(responseCode = "200", description = "환경 행사 목록")
     @GetMapping
     public List<CrawledData> list() {
         return infoService.getList();
     }
 
+    @Operation(summary = "환경 행사 상세 조회", description = "해시값으로 단일 환경 행사 정보를 조회")
+    @Parameter(name = "hash", required = true, in = ParameterIn.PATH, description = "환경 행사 데이터를 식별하는 해시값")
+    @ApiResponse(responseCode = "200", description = "환경 행사 상세 정보")
     @GetMapping("/{hash}")
     public CrawledData info(@PathVariable("hash") Integer hash) {
         return infoService.get(hash);
