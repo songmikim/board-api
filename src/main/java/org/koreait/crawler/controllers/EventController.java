@@ -9,12 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.entities.CrawledData;
 import org.koreait.crawler.services.CrawledDataInfoService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.koreait.global.search.CommonSearch;
+import org.koreait.global.search.ListData;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,14 +21,14 @@ public class EventController {
 
     private final CrawledDataInfoService infoService;
 
-    @Operation(summary = "환경 행사 목록 조회", description = "저장된 모든 환경 행사 정보를 조회")
+    @Operation(summary = "환경 행사 목록 조회", description = "저장된 모든 환경 행사 정보를 페이지 단위로 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "환경 행사 목록"),
             @ApiResponse(responseCode = "204", description = "조회된 데이터 없음")
     })
     @GetMapping
-    public List<CrawledData> list() {
-        return infoService.getList();
+    public ListData<CrawledData> list(@ModelAttribute CommonSearch search) {
+        return infoService.getList(search);
     }
 
     @Operation(summary = "환경 행사 상세 조회", description = "해시값으로 단일 환경 행사 정보를 조회")

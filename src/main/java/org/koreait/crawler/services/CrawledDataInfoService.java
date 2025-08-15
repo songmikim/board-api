@@ -1,25 +1,41 @@
 package org.koreait.crawler.services;
 
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.entities.CrawledData;
 import org.koreait.crawler.repositories.CrawledDataRepository;
 import org.koreait.global.exceptions.NotFoundException;
+import org.koreait.global.search.CommonSearch;
+import org.koreait.global.search.ListData;
+import org.koreait.global.search.Pagination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CrawledDataInfoService {
     private final CrawledDataRepository repository;
+    private final HttpServletRequest request;
 
     /**
-     * 크롤링된 데이터 전체 목록을 날짜 기준 내림차순으로 반환
-     * @return
+     * 크롤링된 데이터 목록을 페이지 단위로 조회
+     * @param search 공통 검색 및 페이징 정보
+     * @return 목록 데이터와 페이징 정보
      */
-    public List<CrawledData> getList() {
-        return repository.findAll(Sort.by(Sort.Direction.DESC, "date"));
+    public ListData<CrawledData> getList(CommonSearch search) {
+        int page = Math.max(search.getPage(), 1);
+        int limit = 10; // 한 페이지당 10개 고정
+        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "date"));
+
+        Page<CrawledData> result = repository.findAll(pageable);
+        int total = (int)result.getTotalElements();
+        Pagination pagination = new Pagination(page, total, 10, limit, request);
+
+        return new ListData<>(result.getContent(), pagination);
     }
 
     /**
