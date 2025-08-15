@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.controllers.RequestCrawling;
 import org.koreait.crawler.entities.CrawledData;
+import org.koreait.crawler.entities.CrawlerConfig;
 import org.koreait.crawler.repositories.CrawledDataRepository;
+import org.koreait.crawler.repositories.CrawlerConfigRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,8 @@ public class CrawlingService {
     private final CrawledDataRepository repository;
     private final RestTemplate restTemplate;
     private final ObjectMapper om;
+    private final CrawlerConfigRepository configRepository;
+    private final CrawlerSettingService settingService;
 
     @Value("${api.server.url}")
     private String apiUrl;
@@ -81,6 +85,13 @@ public class CrawlingService {
 
     @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 6L)
     public void scheduledJob() {
+        if (!settingService.isSchedulerEnabled()) {
+            return;
+        }
 
+        List<CrawlerConfig> configs = configRepository.findAll();
+        for (CrawlerConfig config : configs) {
+            process(config.toRequest());
+        }
     }
 }
