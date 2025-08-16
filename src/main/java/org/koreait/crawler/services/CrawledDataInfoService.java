@@ -1,9 +1,12 @@
 package org.koreait.crawler.services;
 
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.StringExpression;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.entities.CrawledData;
+import org.koreait.crawler.entities.QCrawledData;
 import org.koreait.crawler.repositories.CrawledDataRepository;
 import org.koreait.global.exceptions.NotFoundException;
 import org.koreait.global.search.CommonSearch;
@@ -14,6 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +37,45 @@ public class CrawledDataInfoService {
         int limit = 10; // 한 페이지당 10개 고정
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "date"));
 
-        Page<CrawledData> result = repository.findAll(pageable);
-        int total = (int)result.getTotalElements();
+        /* 검색 조건 처리 S*/
+        String sopt = search.getSopt();
+        String skey = search.getSkey();
+        LocalDate sDate = search.getSDate();
+        LocalDate eDate = search.getEDate();
+
+        BooleanBuilder andBuilder = new BooleanBuilder();
+        QCrawledData crawledData = QCrawledData.crawledData;
+
+        if (sDate != null) {
+            andBuilder.and(crawledData.date.goe(sDate));
+        }
+
+        if (eDate != null) {
+            andBuilder.and(crawledData.date.loe(eDate));
+        }
+
+        sopt = StringUtils.hasText(sopt) ? sopt.toUpperCase() : "ALL";
+        if (StringUtils.hasText(skey)) {
+            skey = skey.trim();
+
+            StringExpression title = crawledData.title;
+            StringExpression content = crawledData.content;
+            StringExpression fields;
+
+            if (sopt.equals("TITLE")) {
+                fields = title;
+            } else if (sopt.equals("CONTENT")) {
+                fields = content;
+            } else {
+                fields  = title.concat(content);
+            }
+
+            andBuilder.and(fields.contains(skey));
+        }
+        /* 검색 조건 처리 E*/
+
+        Page<CrawledData> result = repository.findAll(andBuilder, pageable);
+        int total = (int) result.getTotalElements();
         Pagination pagination = new Pagination(page, total, 10, limit, request);
 
         return new ListData<>(result.getContent(), pagination);
