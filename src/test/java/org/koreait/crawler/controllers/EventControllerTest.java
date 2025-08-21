@@ -1,4 +1,4 @@
-package org.koreait.Crawler.controllers;
+package org.koreait.crawler.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

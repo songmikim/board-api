@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.koreait.file.entities.FileInfo;
 import org.koreait.global.entities.BaseEntity;
 import org.koreait.member.constants.Authority;
+import org.koreait.member.constants.SocialChannel;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,12 +17,16 @@ import java.time.LocalDateTime;
 @Table(indexes = {
         @Index(name="idx_member_created_at", columnList = "createdAt DESC"),
         @Index(name="idx_member_name", columnList = "name"),
-        @Index(name="idx_member_mobile", columnList = "mobile")
+        @Index(name="idx_member_mobile", columnList = "mobile"),
+        @Index(name="idx_member_social", columnList = "socialChannel,socialToken")
 })
 public class Member extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
+    @Column(length=45)
+    private String gid;
 
     @Column(length=75, unique = true, nullable = false)
     private String email;
@@ -47,7 +53,16 @@ public class Member extends BaseEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime credentialChangedAt; // 비밀번호 변경 일시
 
+    @Enumerated(EnumType.STRING)
+    public SocialChannel socialChannel;
+
+    @Column(length=45)
+    public String socialToken;
+
     public boolean isAdmin() {
         return authority != null && authority == Authority.ADMIN;
     }
+
+    @Transient
+    private FileInfo profileImage;
 }

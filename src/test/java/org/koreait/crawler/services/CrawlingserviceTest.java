@@ -1,8 +1,7 @@
-package org.koreait.Crawler.services;
+package org.koreait.crawler.services;
 
 import org.junit.jupiter.api.Test;
 import org.koreait.crawler.controllers.RequestCrawling;
-import org.koreait.crawler.services.CrawlingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -21,6 +20,7 @@ public class CrawlingserviceTest {
         form.setLinkSelector(".brd_body .title a");
         form.setTitleSelector(".board_view .board_tit");
         form.setDateSelector(".board_view .createDate");
+        form.setContentSelector(".board_view .board_con");
         form.setUrlPrefix("https://www.me.go.kr");
         service.process(form);
     }

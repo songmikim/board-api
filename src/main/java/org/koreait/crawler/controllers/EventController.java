@@ -39,6 +39,7 @@ public class EventController {
     })
     @GetMapping("/{hash}")
     public CrawledData info(@PathVariable("hash") Integer hash) {
+        System.out.println(hash + "================111====" + infoService.get(hash));
         return infoService.get(hash);
     }
 }
