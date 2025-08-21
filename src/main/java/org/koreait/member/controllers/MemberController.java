@@ -15,6 +15,7 @@ import org.koreait.member.libs.MemberUtil;
 import org.koreait.member.services.JoinService;
 import org.koreait.member.validators.JoinValidator;
 import org.koreait.member.validators.TokenValidator;
+import org.koreait.member.validators.SocialTokenValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
@@ -28,6 +29,7 @@ public class MemberController {
     private final JoinValidator joinValidator;
     private final JoinService joinService;
     private final TokenValidator tokenValidator;
+    private final SocialTokenValidator socialTokenValidator;
     private final TokenService tokenService;
     private final MemberUtil memberUtil;
     private final Utils utils;
@@ -68,6 +70,25 @@ public class MemberController {
         }
 
         return tokenService.create(form.getEmail());
+    }
+
+    /**
+     * 소셜 로그인시 JWT 토큰 발급
+     *
+     * @return
+     */
+    @Operation(summary = "소셜 회원 인증 처리", description = "소셜 채널과 토큰으로 인증한 후 회원 전용 요청을 보낼수 있는 토큰(JWT)을 발급")
+    @ApiResponse(responseCode = "200", description = "인증 성공시 토큰(JWT)발급")
+    @PostMapping("/token/social")
+    public String socialToken(@Valid @RequestBody RequestSocialToken form, Errors errors) {
+
+        socialTokenValidator.validate(form, errors);
+
+        if (errors.hasErrors()) {
+            throw new BadRequestException(utils.getErrorMessages(errors));
+        }
+
+        return tokenService.create(form.getSocialChannel(), form.getSocialToken());
     }
 
 
