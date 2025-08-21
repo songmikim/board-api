@@ -53,16 +53,16 @@ public class CrawlingService {
             List<CrawledData> items = new ArrayList<>();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             for (Object data : response.getBody()) {
-                Map<String , Object> item = (Map<String , Object>) data;
-                String link = (String)item.get("link");
+                Map<String, Object> item = (Map<String, Object>) data;
+                String link = (String) item.get("link");
                 int hash = Objects.hash(link);
-                LocalDate date =  item.get("date") == null ? null : LocalDate.parse((String)item.get("date"), formatter);
-                String title = (String)item.get("title");
-                String content = (String)item.get("content");
-                boolean html =  (boolean)item.get("is_html");
+                LocalDate date = item.get("date") == null ? null : LocalDate.parse((String) item.get("date"), formatter);
+                String title = (String) item.get("title");
+                String content = (String) item.get("content");
+                boolean html = (boolean) item.get("is_html");
                 List<String> images = (List<String>) item.get("image");
 
-                CrawledData _item = new CrawledData();
+                CrawledData _item = repository.findById(hash).orElseGet(CrawledData::new);
                 _item.setHash(hash);
                 _item.setLink(link);
                 _item.setDate(date);
