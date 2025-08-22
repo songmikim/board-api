@@ -37,6 +37,11 @@ public class CrawlingService {
 
     @Value("${api.server.url}")
     private String apiUrl;
+
+    /**
+     * 크롤링 요청을 외부 API(Flask) 서버에 전달하고,
+     * 결과 데이터를 CrawledData 엔티티로 변환 후 DB에 저장하는 메서드
+     */
     public List<CrawledData> process(RequestCrawling form){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -83,6 +88,11 @@ public class CrawlingService {
         return null;
     }
 
+    /**
+     * 24시간마다 실행되는 스케줄러
+     * - 스케줄러가 ON 상태일 때만 동작
+     * - DB에 저장된 CrawlerConfig 목록을 불러와 순차적으로 크롤링 실행
+     */
     @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 6L)
     public void scheduledJob() {
         if (!settingService.isSchedulerEnabled()) {

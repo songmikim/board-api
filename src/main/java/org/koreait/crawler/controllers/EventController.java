@@ -10,8 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.entities.CrawledData;
 import org.koreait.crawler.services.CrawledDataInfoService;
 import org.koreait.global.search.CommonSearch;
+import org.koreait.global.search.ListData;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class EventController {
             @ApiResponse(responseCode = "204", description = "조회된 데이터 없음")
     })
     @GetMapping
-    public List<CrawledData> list(@ModelAttribute CommonSearch search) {
+    public ListData<CrawledData> list(@ModelAttribute CommonSearch search) {
         return infoService.getList(search);
     }
 
