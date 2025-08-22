@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.koreait.crawler.entities.CrawledData;
 import org.koreait.crawler.repositories.CrawledDataRepository;
-import org.koreait.global.search.ListData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -77,9 +77,9 @@ public class EventControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        ListData<CrawledData> data = om.readValue(body, new TypeReference<ListData<CrawledData>>() {});
-        assertEquals(2, data.getItems().size());
-        assertEquals(2, data.getItems().get(0).getHash());
+        List<CrawledData> data = om.readValue(body, new TypeReference<List<CrawledData>>() {});
+        assertEquals(2, data.size());
+        assertEquals(2, data.get(0).getHash());
     }
 
     /**
@@ -97,9 +97,9 @@ public class EventControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        ListData<CrawledData> data = om.readValue(body, new TypeReference<ListData<CrawledData>>() {});
-        assertEquals(1, data.getItems().size());
-        assertEquals("Event1", data.getItems().get(0).getTitle());
+        List<CrawledData> data = om.readValue(body, new TypeReference<List<CrawledData>>() {});
+        assertEquals(1, data.size());
+        assertEquals("Event1", data.get(0).getTitle());
     }
 
     /**
