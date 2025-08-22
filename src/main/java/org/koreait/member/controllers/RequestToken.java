@@ -1,13 +1,13 @@
 package org.koreait.member.controllers;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.koreait.member.constants.SocialChannel;
 
 @Data
 public class RequestToken {
-    @NotBlank
+    private boolean social;
     private String email;
-
-    @NotBlank
     private String password;
+    private SocialChannel socialChannel;
+    private String socialToken;
 }
