@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.koreait.crawler.entities.CrawledData;
 import org.koreait.crawler.services.CrawledDataInfoService;
 import org.koreait.global.search.CommonSearch;
-import org.koreait.global.search.ListData;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,13 +21,13 @@ public class EventController {
 
     private final CrawledDataInfoService infoService;
 
-    @Operation(summary = "환경 행사 목록 조회", description = "저장된 모든 환경 행사 정보를 페이지 단위로 조회")
+    @Operation(summary = "환경 행사 목록 조회", description = "저장된 모든 환경 행사 정보를 페이징 없이 조회")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "환경 행사 목록"),
             @ApiResponse(responseCode = "204", description = "조회된 데이터 없음")
     })
     @GetMapping
-    public ListData<CrawledData> list(@ModelAttribute CommonSearch search) {
+    public List<CrawledData> list(@ModelAttribute CommonSearch search) {
         return infoService.getList(search);
     }
 
