@@ -45,7 +45,7 @@ public class CrawlerConfig extends BaseEntity {
         form.setTitleSelector(titleSelector);
         form.setDateSelector(dateSelector);
         form.setContentSelector(contentSelector);
-        form.setUrl(urlPrefix);
+        form.setUrlPrefix(urlPrefix);
         return form;
     }
 
