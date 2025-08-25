@@ -67,7 +67,17 @@ public class CrawlingService {
                 String title = (String) item.get("title");
                 String content = (String) item.get("content");
                 boolean html = (boolean) item.get("is_html");
-                List<String> images = (List<String>) item.get("image");
+
+                Object imageObj = item.get("image");
+                List<String> images = null;
+                if (imageObj instanceof List<?> list) {
+                    images = list.stream()
+                            .filter(Objects::nonNull)
+                            .map(Object::toString)
+                            .toList();
+                } else if (imageObj instanceof String str) {
+                    images = List.of(str);
+                }
 
                 CrawledData _item = repository.findById(hash).orElseGet(CrawledData::new);
                 _item.setHash(hash);
