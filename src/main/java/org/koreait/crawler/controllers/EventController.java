@@ -29,6 +29,7 @@ public class EventController {
     })
     @GetMapping
     public ListData<CrawledData> list(@ModelAttribute CommonSearch search) {
+        System.out.println( "///////////////==//"+ infoService.getList(search));
         return infoService.getList(search);
     }
 

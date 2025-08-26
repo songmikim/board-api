@@ -146,7 +146,7 @@ public class BoardController {
         if (StringUtils.hasText(bid)) {
             search.setBid(List.of(bid));
         }
-
+        System.out.println( "11111111111111"+ infoService.getList(search));
         return infoService.getList(search);
     }
 
