@@ -33,7 +33,7 @@ public class CrawledDataInfoService {
      */
     public ListData<CrawledData> getList(CommonSearch search) {
         int page = Math.max(search.getPage(), 1);
-        int limit = 10; // 한 페이지당 10개 고정
+        int limit = 5; // 한 페이지당 10개 고정
         Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "date"));
 
         /* 검색 조건 처리 S*/
