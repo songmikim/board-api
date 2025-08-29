@@ -110,8 +110,7 @@ public class BoardController {
     })
     @RequestMapping(path="/update/config", method={RequestMethod.POST, RequestMethod.PATCH})
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> updateConfig(@Valid RequestBoardConfig form, Errors errors) {
-        System.out.println("==============-========="+ form);
+    public ResponseEntity<Void> updateConfig(@Valid @RequestBody RequestBoardConfig form, Errors errors) {
         String mode = request.getMethod().equalsIgnoreCase("PATCH") ? "update":"register";
         form.setMode(mode);
 
@@ -147,7 +146,7 @@ public class BoardController {
         if (StringUtils.hasText(bid)) {
             search.setBid(List.of(bid));
         }
-        System.out.println( "11111111111111"+ infoService.getList(search));
+
         return infoService.getList(search);
     }
 
@@ -236,6 +235,13 @@ public class BoardController {
         String mode = request.getMethod().equalsIgnoreCase("PATCH") ? "comment_update" : "comment_write";
         form.setMode(mode);
 
+        if (mode.equals("comment_update")) {
+            Comment comment = commentInfoService.get(form.getSeq());
+            form.setGuest(comment.isGuest());
+        } else {
+            form.setGuest(!memberUtil.isLogin());
+        }
+
         HttpStatus status = mode.equals("comment_update") ? HttpStatus.OK : HttpStatus.CREATED;
 
         commentValidator.validate(form, errors);
@@ -259,12 +265,18 @@ public class BoardController {
         return commentDeleteService.process(seq);
     }
 
+    @Operation(summary = "비회원 게시글또는 댓글의 수정, 삭제 가능 여부체크", description = "응답 코드 200 - 승인 완료, 401 - 비회원 비밀번호 확인이 필요")
+    @GetMapping("/guest/{mode}/{seq}")
+    public void guestPasswordCheck(@PathVariable("mode") String mode, @PathVariable("seq") Long seq) {
+        authService.check(mode, seq);
+    }
+
     @Operation(summary = "비회원 게시글 또는 댓글의 수정, 삭제 비밀번호 검증", method="POST")
     @ApiResponse(responseCode = "204")
     @Parameter(name="password", required = true, in = ParameterIn.QUERY, description = "비회원 비밀번호")
     @PostMapping("/password")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void guestPasswordCheck(@Valid @RequestBody RequestPassword form, Errors errors) {
+    public void guestPasswordCheckProcess(@Valid @RequestBody RequestPassword form, Errors errors) {
         if (errors.hasErrors()) {
             throw new BadRequestException(utils.getErrorMessages(errors));
         }
